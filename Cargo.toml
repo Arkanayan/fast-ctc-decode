@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 numpy = "0.7.0"
-ndarray = { version = "0.13.0", features = ["blas"] }
+ndarray = { version = "0.13.0", features = ["blas", "rayon"] }
 pyo3 = { version = "0.8.5", features = ["extension-module"] }
 
 [features]
@@ -21,3 +21,6 @@ fastexp = []
 lto=true
 codegen-units=1
 panic="abort"
+
+[dev-dependencies]
+ndarray-npy = "0.5"

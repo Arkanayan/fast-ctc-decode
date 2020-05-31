@@ -37,7 +37,7 @@ pub fn beam_search<D: Data<Elem = f32>>(
     alphabet: &[String],
     beam_size: usize,
     beam_cut_threshold: f32,
-) -> Result<(String, Vec<usize>), SearchError> {
+) -> Result<Vec<String>, SearchError> {
     // alphabet size minus the blank label
     let alphabet_size = alphabet.len() - 1;
 
@@ -149,18 +149,30 @@ pub fn beam_search<D: Data<Elem = f32>>(
         }
     }
 
-    let mut path = Vec::new();
-    let mut sequence = String::new();
+    // let mut path = Vec::new();
 
-    if beam[0].node != ROOT_NODE {
-        for (label, &time) in suffix_tree.iter_from(beam[0].node) {
-            path.push(time);
-            sequence.push_str(&alphabet[label + 1]);
-        }
+    let mut results = Vec::new();
+
+    for b in beam.iter().take(beam_size) {
+        let mut sequence = String::new(); 
+        if b.node != ROOT_NODE {
+            for (label, &_time) in suffix_tree.iter_from(b.node) {
+                sequence.push_str(&alphabet[label + 1].to_owned());
+            }
+        } 
+        let sequence = sequence.chars().rev().collect();
+        results.push(sequence);
     }
+    // if beam[0].node != ROOT_NODE {
+    //     for (label, &time) in suffix_tree.iter_from(beam[0].node) {
+    //         path.push(time);
+    //         sequence.push_str(&alphabet[label + 1]);
+    //     }
+    // }
 
-    path.reverse();
-    Ok((sequence.chars().rev().collect::<String>(), path))
+    // path.reverse();
+    // Ok((sequence.chars().rev().collect::<String>(), path))
+    Ok(results)
 }
 
 fn find_max(
